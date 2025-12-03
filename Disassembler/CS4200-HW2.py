@@ -8,7 +8,7 @@ instructions.
 '''
 import numpy as np
 
-file = 'risc-v_instructions.bin'
+file = 'Disassembler/risc-v_instructions.bin'
 
 # ask user if they want to read from specified file
 #user_choice = input("\nDo you wish to decode instructions from " + file + "? (Y/N) ")
@@ -39,17 +39,6 @@ for encoded_instruction in instructions_as_bytes:
     match opcode:
         case 51:
             # print("R-type")
-
-            # check if instruction is negative 
-            if (encoded_instruction >> 31) == -1:
-                # generate a mask to use for sign extension 
-                mask = (0xFFFFFFFF << length - 1) & 0xFFFFFFFF
-                #print("mask = " + str(np.binary_repr(mask))) # for debugging
-
-                encoded_instruction = np.int64(encoded_instruction) # to resolve issues with overflow
-                encoded_instruction = encoded_instruction ^ mask
-                #print(str(np.binary_repr(encoded_instruction)))
-                encoded_instruction = np.int32(encoded_instruction)
             
             # extract the rd field and process 
             rd = (encoded_instruction >> 7) & 0x1F
@@ -114,18 +103,7 @@ for encoded_instruction in instructions_as_bytes:
             print("RISC-V instruction: " + str(decoded_instruction)) # for debugging 
 
         case 3 | 19: 
-            #print("I-type")
-
-            # check if instruction is negative 
-            if (encoded_instruction >> 31) == -1:
-                # generate a mask to use for sign extension 
-                mask = (0xFFFFFFFF << length - 1) & 0xFFFFFFFF
-                #print("mask = " + str(np.binary_repr(mask))) # for debugging
-
-                encoded_instruction = np.int64(encoded_instruction) # to resolve issues with overflow
-                encoded_instruction = encoded_instruction ^ mask
-                #print(str(np.binary_repr(encoded_instruction)))
-                encoded_instruction = np.int32(encoded_instruction)
+            # print("I-type")
 
             # extract the rd field and process
             rd = (encoded_instruction >> 7) & 0x1F
@@ -141,13 +119,24 @@ for encoded_instruction in instructions_as_bytes:
 
             # extract the immediate field and process (signed)
             immediate = (encoded_instruction >> 20) & 0xFFF
-            #print(bin(immediate))
+            # print(bin(immediate))
+
+            # check if sign bit of instruction is set
+            is_negative = False
+            if ((encoded_instruction >> 31) == -1):
+                # sign bit is set, instruction is negative, so sign extend
+                immediate = immediate - (1 << 12)
+                is_negative = True
+                # print("sign bit is set, instruction is negative")
+
+                # print(str(np.binary_repr(immediate)))
+                # print(str(np.binary_repr(encoded_instruction)))
 
             # based on opcode and funct3, determine the exact instruction
             instruction = ""
             if opcode == 3:
-                #print("I-Type: Load")
-                itype_load = " x" + str(rd) + " " + str(immediate) + "(x" + str(rs1) + ")"
+                # print("I-Type: Load")
+                itype_load = " x" + str(rd) + ", " + str(immediate) + "(x" + str(rs1) + ")"
 
                 match funct3:
                     case 0:
@@ -167,7 +156,7 @@ for encoded_instruction in instructions_as_bytes:
                         decoded_instruction = instruction + itype_load
 
             if opcode == 19:
-                #print("I-Type: Arithmetic")
+                # print("I-Type: Arithmetic")
                 itype_arithmetic = " x" + str(rd) + ", x" + str(rs1) + ", " + str(immediate)
 
                 match funct3:
@@ -216,22 +205,11 @@ for encoded_instruction in instructions_as_bytes:
             print("RISC-V instruction: " + str(decoded_instruction)) # for debugging 
 
         case 35:
-            #print("S-type")
+            # print("S-type")
 
-            # check if instruction is negative 
-            if (encoded_instruction >> 31) == -1:
-                # generate a mask to use for sign extension 
-                mask = (0xFFFFFFFF << length - 1) & 0xFFFFFFFF
-                #print("mask = " + str(np.binary_repr(mask))) # for debugging
-
-                encoded_instruction = np.int64(encoded_instruction) # to resolve issues with overflow
-                encoded_instruction = encoded_instruction ^ mask
-                #print(str(np.binary_repr(encoded_instruction)))
-                encoded_instruction = np.int32(encoded_instruction)
-
-            # extract the rd field and process 
-            rd = (encoded_instruction >> 7) & 0x1F
-            #print(bin(rd))
+            # extract the rd field (immediate 4:0) and process 
+            immediate4_0 = (encoded_instruction >> 7) & 0x1F
+            # print(bin(immediate4_0))
 
             # extract the funct3 field and process 
             funct3 = (encoded_instruction >> 12) & 0x7
@@ -245,13 +223,31 @@ for encoded_instruction in instructions_as_bytes:
             rs2 = (encoded_instruction >> 20) & 0x1F
             #print(bin(rs2))
 
-            # extract the immediate field and process
-            immediate = (encoded_instruction >> 25) & 0x7F
-            #print(bin(immediate))
+            # extract the funct7 field (immediate 11:5) and process
+            immediate11_5 = (encoded_instruction >> 25) & 0x7F
+            # print(bin(immediate11_5))
+
+            # reconstruct immediate
+            immediate11_5_shifted = immediate11_5 >> 25
+            immediate4_0_shifted = immediate4_0 >> 5
+
+            immediate = immediate11_5_shifted | immediate4_0_shifted
+            # print(str(np.binary_repr(immediate)))
+
+            # check if sign bit of instruction is set
+            is_negative = False
+            if ((encoded_instruction >> 31) == -1):
+                # sign bit is set, instruction is negative, so sign extend
+                immediate = immediate - (1 << 13)
+                is_negative = True
+                # print("sign bit is set, instruction is negative")
+
+                # print(str(np.binary_repr(immediate)))
+                # print(str(np.binary_repr(encoded_instruction)))
 
             # based on funct3, determine the exact instruction
             instruction = ""
-            stype = " x" + str(rs2) + " " + str(immediate) + "(x" + str(rs1) + ")"
+            stype = " x" + str(rs2) + ", " + str(immediate) + "(x" + str(rs1) + ")"
 
             match funct3:
                 case 0:
@@ -269,62 +265,61 @@ for encoded_instruction in instructions_as_bytes:
             print("RISC-V instruction: " + str(decoded_instruction)) # for debugging 
 
         case 99:
-            #print("SB-type")
-
-            # (had a really difficult time with this section)
-            # check if instruction is negative 
-            if (encoded_instruction >> 31) == -1:
-                # generate a mask to use for sign extension 
-                mask = (0xFFFFFFFF << length - 1) & 0xFFFFFFFF
-                #print("mask = " + str(np.binary_repr(mask))) # for debugging
-
-                encoded_instruction = np.int64(encoded_instruction) # to resolve issues with overflow
-                encoded_instruction = encoded_instruction ^ mask
-                #print(str(np.binary_repr(encoded_instruction)))
-                encoded_instruction = np.int32(encoded_instruction)
+            # print("SB-type")
 
             # extract the immediate[11] field and process 
             immediate11 = (encoded_instruction >> 7) & 0x1
-            #print("immediate11 = " + str(bin(immediate11)))
+            # print("immediate11 = " + str(bin(immediate11)))
 
             # extract the immediate[4:1] field and process
             immediate4_1 = (encoded_instruction >> 8) & 0xF
-            #print(bin(immediate4_1))
+            # print("immediate4_1 = " + str(bin(immediate4_1)))
 
             # extract the funct3 field and process
             funct3 = (encoded_instruction >> 12) & 0x7
-            #print(bin(funct3))
+            # print("funct3 = " + str(bin(funct3)))
 
             # extract the rs1 field and process 
             rs1 = (encoded_instruction >> 15) & 0x1F
-            #print(bin(rs1))
+            # print("rs1 = " + str(bin(rs1)))
 
             # extract the rs2 field and process 
             rs2 = (encoded_instruction >> 20) & 0x1F
-            #print(bin(rs2))
+            # print("rs2 = " + str(bin(rs2)))
 
             # extract the immediate[10:5] field and process 
-            immediate10_5 = (encoded_instruction >> 26) & 0x3F
-            #print(bin(immediate10_5))
+            immediate10_5 = (encoded_instruction >> 25) & 0x3F
+            # print("immediate10_5 = " + str(bin(immediate10_5)))
 
             # extract the immediate[12] field and process 
-            immediate12 = (encoded_instruction >> 27) & 0x1
-            #print(bin(immediate12))
-            #print("type of immediate = " + str(type(immediate12)))
+            immediate12 = (encoded_instruction >> 31) & 0x1
+            # print("immediate12 = " + str(bin(immediate12)))
+            # print("type of immediate = " + str(type(immediate12)))
 
             # reconstruct the immediate
             # treat every immediate as a mask so we can xor them all together later 
-            immediate4_1 = immediate4_1 << 1 # shifted over one to account for branch offset
-            immediate10_5 = immediate10_5 << 5
-            immediate11 = immediate11 << 11
-            immediate12 = immediate12 << 12
-            # print("immediate 4_1 = " + str(np.binary_repr(immediate4_1)))
-            # print("immediate 10_5 = " + str(np.binary_repr(immediate10_5)))
-            # print("immediate 11 = " + str(np.binary_repr(immediate11)))
-            # print("immediate 12 = " + str(np.binary_repr(immediate12)))
+            immediate4_1_shifted = immediate4_1 << 1 # shifted over one to account for branch offset
+            immediate10_5_shifted = immediate10_5 << 5
+            immediate11_shifted = immediate11 << 11
+            immediate12_shifted = immediate12 << 12
+            # print("immediate4_1 (shifted) = " + str(np.binary_repr(immediate4_1_shifted)))
+            # print("immediate10_5 (shifted) = " + str(np.binary_repr(immediate10_5_shifted)))
+            # print("immediate11 (shifted) = " + str(np.binary_repr(immediate11_shifted)))
+            # print("immediate12 (shifted) = " + str(np.binary_repr(immediate12_shifted)))
 
-            immediate = immediate4_1 ^ immediate10_5 ^ immediate11 ^ immediate12
-            #print("immediate = " + str(bin(immediate)))
+            immediate = immediate12_shifted | immediate11_shifted | immediate10_5_shifted | immediate4_1_shifted
+            # print("immediate = " + str(bin(immediate)))
+
+            # check if sign bit of instruction is set
+            is_negative = False
+            if ((encoded_instruction >> 31) == -1):
+                # sign bit is set, instruction is negative, so sign extend
+                immediate = immediate - (1 << 13)
+                is_negative = True
+                # print("sign bit is set, instruction is negative")
+
+                # print(str(np.binary_repr(immediate)))
+                # print(str(np.binary_repr(encoded_instruction)))
 
             # based on funct3, determine the exact instruction
             instruction = ""
@@ -355,18 +350,18 @@ for encoded_instruction in instructions_as_bytes:
             print("RISC-V instruction: " + str(decoded_instruction)) # for debugging 
 
         case 55 | 23:
-            #print("U-type")
+            # print("U-type")
 
-            # check if instruction is negative 
-            if (encoded_instruction >> 31) == -1:
-                # generate a mask to use for sign extension 
-                mask = (0xFFFFFFFF << length - 1) & 0xFFFFFFFF
-                #print("mask = " + str(np.binary_repr(mask))) # for debugging
+            # check if sign bit of instruction is set
+            is_negative = False
+            if ((encoded_instruction >> 31) == -1):
+                # sign bit is set, instruction is negative, so sign extend
+                immediate = immediate - (1 << 13)
+                is_negative = True
+                # print("sign bit is set, instruction is negative")
 
-                encoded_instruction = np.int64(encoded_instruction) # to resolve issues with overflow
-                encoded_instruction = encoded_instruction ^ mask
-                #print(str(np.binary_repr(encoded_instruction)))
-                encoded_instruction = np.int32(encoded_instruction)
+                # print(str(np.binary_repr(immediate)))
+                # print(str(np.binary_repr(encoded_instruction)))
 
             # extract the rd field and process 
             rd = (encoded_instruction >> 7) & 0x1F
