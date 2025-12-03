@@ -13,8 +13,8 @@ SECTION 1.1 CODE WITH 5-STAGES
 '''
 
 from Assembler import *
-from Disassembler import *
-from Disassembler import PipelineStages
+from FiveStagePipeline import *
+from FiveStagePipeline import PipelineStages
 
 def main():
     file = 'Disassembler/risc-v_instructions.bin'

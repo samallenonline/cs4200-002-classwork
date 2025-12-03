@@ -10,10 +10,25 @@ import numpy as np
 
 def encodeInstruction(instruction):
     '''
-    this method will encode an instruction into binary
+    this method encodes a single RISC-V instruction into binary 
     '''
-    # encodes a single RISC-V instruction into binary 
-    # calls writeEncoded() to write the instruction to a binary file
+
+    # clean and parse string 
+    cleaned_instruction = instruction.replace(',', '') # remove comma
+    cleaned_instruction = cleaned_instruction.replace('(', ' ') # remove parenthesis
+    cleaned_instruction = cleaned_instruction.replace(')', ' ')
+    
+    unwanted_char = ' '
+    cleaned_instruction = cleaned_instruction.strip(unwanted_char) # remove white space 
+
+    print(cleaned_instruction)
+    operands = cleaned_instruction.split(' ') # split operands and save in list
+    print(operands)
+
+    # extract instruction type to determine opcode 
+
+
+    # call writeEncoded() to write the instruction to a binary file
     return 0
 
 def writeEncoded(instruction):
@@ -45,3 +60,14 @@ def binaryToString(num):
     0b removed
     '''
     return (bin(num)) [2:]
+
+#### TESTING ####
+
+def main():
+    instruction = "lw x7, 0(x10)"
+    encodeInstruction(instruction)
+
+    return 0
+
+if __name__ == "__main__":
+    main()
