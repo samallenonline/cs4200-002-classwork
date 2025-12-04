@@ -5,6 +5,8 @@ them back to the user in a human readable assembly language.
 
 Note: This dissasembler only works for R, I, I*, S, SB, and U type 
 instructions. 
+
+THIS CODE IS BASED ON MY DISASSEMBLER ASSIGNMENT SUBMISSION
 '''
 
 import numpy as np
