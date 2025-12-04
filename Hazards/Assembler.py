@@ -14,7 +14,7 @@ def encodeInstruction(instruction):
     '''
     this method encodes a single RISC-V instruction into binary 
     '''
-
+    print(f"RISC-V instruction: {instruction}")
     # clean and parse string 
     cleaned_instruction = instruction.replace(',', '') # remove comma
     cleaned_instruction = cleaned_instruction.replace('(', ' ') # remove parenthesis
@@ -23,7 +23,7 @@ def encodeInstruction(instruction):
     unwanted_char = ' '
     cleaned_instruction = cleaned_instruction.strip(unwanted_char) # remove white space 
 
-    print(cleaned_instruction)
+    # print(cleaned_instruction)
     segments = cleaned_instruction.split(' ') # split segments and save in list
     # print(segments)
 
@@ -91,24 +91,3 @@ def binaryToString(num):
     '''
     unsigned = num & 0xFFFFFFFF
     return format(unsigned, '032b')
-
-#### TESTING ####
-
-def main():
-    instructions = ["lw x7, 0(x10)", "addi x5, x0, 3", "lw x6, 0(x7)", "xori x6, x6, 32", "sw x6, 0(x7)", 
-        "addi x7, x7, 4", "addi x5, x5, -1", "bne x5, x0, -40"]
-
-    file_name = "test.bin"
-
-    for instruction in instructions:
-        encoded_instruction = encodeInstruction(instruction)
-        encoded_instruction = binaryToString(encoded_instruction)
-        print(encoded_instruction)
-        writeEncoded(encoded_instruction, file_name)
-
-        print("\n")
-
-    return 0
-
-if __name__ == "__main__":
-    main()

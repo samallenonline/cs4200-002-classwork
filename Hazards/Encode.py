@@ -9,8 +9,8 @@ def encodeRType(segments, encoded_instruction):
     encode R-type instruction 
     syntax: opcode rd, rs1, rs2
     '''
-    print("R-type")
-    print(segments)
+    # print("R-type")
+    # print(segments)
 
     # identify and store segments 
     opcode_str = segments[0]
@@ -47,8 +47,8 @@ def encodeI_AType(segments, encoded_instruction):
     encode I-type instruction (arithmetic) 
     syntax: opcode rd, rs1, immediate
     '''
-    print("I-type Arithmetic")
-    print(segments)
+    # print("I-type Arithmetic")
+    # print(segments)
 
     # identify and store segments 
     opcode_str = segments[0]
@@ -82,8 +82,8 @@ def encodeI_LType(segments, encoded_instruction):
     encode I-type instruction (load) 
     syntax: opcode rd, immediate(rs1)
     '''
-    print("I-type Load")
-    print(segments)
+    # print("I-type Load")
+    # print(segments)
 
     # identify and store segments 
     opcode_str = segments[0]
@@ -117,8 +117,8 @@ def encodeI_SType(segments, encoded_instruction):
     encode I*-type instruction
     syntax: opcode rd, rs1, immediate
     '''
-    print("I*-type")
-    print(segments)
+    # print("I*-type")
+    # print(segments)
 
     # identify and store segments
     opcode_str = segments[0]
@@ -153,8 +153,8 @@ def encodeSType(segments, encoded_instruction):
     encode S-type instruction
     syntax: opcode rs2, immediate(rs1)
     '''
-    print("S-type")
-    print(segments)
+    # print("S-type")
+    # print(segments)
 
     # identify and store segments 
     opcode_str = segments[0]
@@ -188,8 +188,8 @@ def encodeSBType(segments, encoded_instruction):
     encode SB-type instruction
     syntax: opcode rs1, rs2, immediate
     '''
-    print("SB-type")
-    print(segments)
+    # print("SB-type")
+    # print(segments)
 
     # identify and store segments
     opcode_str = segments[0]
