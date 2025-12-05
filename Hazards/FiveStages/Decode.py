@@ -4,7 +4,7 @@ that is supported by the assembler. This includes R, I, I*, S,
 SB, and U type instructions. 
 '''
 
-def decodeRType(encoded_instruction): 
+def decodeRType(encoded_instruction, instruction_data, cycle_data): 
     '''
     decode R-type instruction 
     syntax: opcode rd, rs1, rs2
@@ -49,9 +49,9 @@ def decodeRType(encoded_instruction):
     decoded_instruction = rtype
     
     print(f"RISC-V instruction: {decoded_instruction}")
-    return encoded_instruction
+    return instruction_data, cycle_data
 
-def decodeI_LType(encoded_instruction):
+def decodeI_LType(encoded_instruction, instruction_data, cycle_data):
     '''
     decode I-type load instructions
     '''
@@ -78,9 +78,17 @@ def decodeI_LType(encoded_instruction):
     decoded_instruction = i_ltype
 
     print(f"RISC-V instruction: {decoded_instruction}")
-    return encoded_instruction
 
-def decodeI_AType(encoded_instruction):
+    ##### store fields in instruction_data #####
+    instruction_data["Instr"] = str(instruction)
+    instruction_data["Rd"] = str(rd)
+    instruction_data["Fct3"] = str(funct3)
+    instruction_data["Rs1"] = str(rs1)
+    instruction_data["Imm"] = str(immediate)
+
+    return instruction_data, cycle_data
+
+def decodeI_AType(encoded_instruction, instruction_data, cycle_data):
     '''
     decode I-type (arithmetic) instructions 
     '''
@@ -116,6 +124,9 @@ def decodeI_AType(encoded_instruction):
             immediate4_0 = immediate & 0x1F # lower 5 bits
             funct7 = (encoded_instruction >> 25) & 0x7F
 
+            ##### store fields in instruction_data #####
+            instruction_data["Fct7"] = str(funct7)
+
             # determine instruction using funct3 and funct7
             if funct3 == 1:
                 instruction = 'slli'
@@ -124,13 +135,21 @@ def decodeI_AType(encoded_instruction):
             else:
                 instruction = 'srai'
         
-    i_atype = f"{instruction} x{rd}, x{rs1}, {immediate})"  
+    i_atype = f"{instruction} x{rd}, x{rs1}, {immediate}"  
     decoded_instruction = i_atype
 
     print(f"RISC-V instruction: {decoded_instruction}")
-    return encoded_instruction
 
-def decodeSType(encoded_instruction):
+    ##### store fields in instruction_data #####
+    instruction_data["Instr"] = str(instruction)
+    instruction_data["Rd"] = str(rd)
+    instruction_data["Fct3"] = str(funct3)
+    instruction_data["Rs1"] = str(rs1)
+    instruction_data["Imm"] = str(immediate)
+
+    return instruction_data, cycle_data
+
+def decodeSType(encoded_instruction, instruction_data, cycle_data):
     '''
     decode S-type instruction
     syntax: opcode rs2, immediate(rs1)
@@ -161,9 +180,17 @@ def decodeSType(encoded_instruction):
     decoded_instruction = stype
 
     print(f"RISC-V instruction: {decoded_instruction}")
-    return encoded_instruction
 
-def decodeSBType(encoded_instruction):
+    ##### store fields in instruction_data #####
+    instruction_data["Instr"] = str(instruction)
+    instruction_data["Fct3"] = str(funct3)
+    instruction_data["Rs1"] = str(rs1)
+    instruction_data["Rs2"] = str(rs2)
+    instruction_data["Imm"] = str(immediate)
+
+    return instruction_data, cycle_data
+
+def decodeSBType(encoded_instruction, instruction_data, cycle_data):
     '''
     decode SB-type instruction
     syntax: opcode rs1, rs2, immediate
@@ -196,9 +223,9 @@ def decodeSBType(encoded_instruction):
     decoded_instruction = sbtype
 
     print(f"RISC-V instruction: {decoded_instruction}")
-    return encoded_instruction
+    return instruction_data, cycle_data
 
-def decodeUType(encoded_instruction, opcode):
+def decodeUType(encoded_instruction, opcode, instruction_data, cycle_data):
     '''
     decode U-type instruction
     syntax: opcode, rd, immediate
@@ -221,4 +248,4 @@ def decodeUType(encoded_instruction, opcode):
     decoded_instruction = utype
 
     print(f"RISC-V instruction: {decoded_instruction}")
-    return encoded_instruction
+    return instruction_data, cycle_data

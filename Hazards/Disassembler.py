@@ -10,28 +10,30 @@ THIS CODE IS BASED ON MY DISASSEMBLER ASSIGNMENT SUBMISSION
 '''
 
 import numpy as np
-from Decode import *
+from FiveStages.Decode import *
 
-def decodeInstruction(encoded_instruction):
+def decodeInstruction(encoded_instruction, instruction_data, cycle_data):
     '''
     this method decodes a single binary RISC-V instruction into text
     '''
     # extract the opcode
     opcode = encoded_instruction & 0x7F
 
+    instruction_data["Op"] = opcode
+
     # using the opcode, determine the instruction type
     if opcode == 0x33: # R-type instruction
-        return decodeRType(encoded_instruction)
+        return decodeRType(encoded_instruction, instruction_data, cycle_data)
     elif opcode == 0x03: # I-type instruction (load)
-        return decodeI_LType(encoded_instruction)
+        return decodeI_LType(encoded_instruction, instruction_data, cycle_data)
     elif opcode == 0x13: # I-type instruction (arithmetic)
-        return decodeI_AType(encoded_instruction)
+        return decodeI_AType(encoded_instruction, instruction_data, cycle_data)
     elif opcode == 0x23: # S-type instruction
-        return decodeSType(encoded_instruction)
+        return decodeSType(encoded_instruction, instruction_data, cycle_data)
     elif opcode == 0x63: # SB-type instruction 
-        return decodeSBType(encoded_instruction)
+        return decodeSBType(encoded_instruction, instruction_data, cycle_data)
     elif opcode == 0x37 or opcode == 0x17: # U-type instruction
-        return decodeUType(encoded_instruction, opcode)
+        return decodeUType(encoded_instruction, opcode, instruction_data, cycle_data)
     else:
         raise ValueError(f"Could not identify instruction type: {encoded_instruction}")
  
