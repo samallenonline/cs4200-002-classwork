@@ -8,6 +8,7 @@ from Disassembler import *
 from Disassembler import decodeInstruction
 from FiveStages.Execute import *
 from FiveStages.Memory import *
+from FiveStages.WriteBack import * 
 
 class PipelineStages:
     '''
@@ -23,7 +24,13 @@ class PipelineStages:
     def Fetch(self, encoded_instruction, instruction_data, cycle_data):
         # obtain encoded instruction based on program counter 
         # store instruction
-        print("\nBinary instruction: " + np.binary_repr(encoded_instruction)) # for debugging
+
+        # check if is a label 
+        if (isinstance(encoded_instruction, dict)):
+            print("This is a label")
+            print("\nBinary instruction: " + np.binary_repr(encoded_instruction["Label:"])) # for debugging
+        else:
+            print("\nBinary instruction: " + np.binary_repr(encoded_instruction)) # for debugging
 
         self.programCounter += 1 # increment program counter 
         return instruction_data, cycle_data
@@ -64,20 +71,37 @@ class PipelineStages:
         opcode = instruction_data["Op"]
 
         if opcode == 0x33: # R-type instruction
-            return memoryRType(cycle_data)
+            return memoryRType(instruction_data, cycle_data)
         elif opcode == 0x03: # I-type instruction (load)
-            return memoryI_LType(cycle_data)
+            return memoryI_LType(instruction_data, cycle_data)
         elif opcode == 0x13: # I-type instruction (arithmetic)
-            return memoryI_AType(cycle_data)
+            return memoryI_AType(instruction_data, cycle_data)
         elif opcode == 0x23: # S-type instruction
-            return memorySType(cycle_data)
+            return memorySType(instruction_data, cycle_data)
         elif opcode == 0x63: # SB-type instruction 
-            return memorySBType(cycle_data)
+            return memorySBType(instruction_data, cycle_data)
         elif opcode == 0x37 or opcode == 0x17: # U-type instruction
-            return memoryUType(cycle_data)
+            return memoryUType(instruction_data, cycle_data)
         else:
             raise ValueError(f"Could not identify instruction type: {opcode}")
     
     def WriteBack(self, instruction_data, cycle_data):
         # write result to register file
-        return instruction_data, cycle_data
+
+        # handle based on opcode
+        opcode = instruction_data["Op"]
+
+        if opcode == 0x33: # R-type instruction
+            return writeBackRType(instruction_data, cycle_data)
+        elif opcode == 0x03: # I-type instruction (load)
+            return writeBackI_LType(instruction_data, cycle_data)
+        elif opcode == 0x13: # I-type instruction (arithmetic)
+            return writeBackI_AType(instruction_data, cycle_data)
+        elif opcode == 0x23: # S-type instruction
+            return writeBackSType(instruction_data, cycle_data)
+        elif opcode == 0x63: # SB-type instruction 
+            return writeBackSBType(instruction_data, cycle_data)
+        elif opcode == 0x37 or opcode == 0x17: # U-type instruction
+            return writeBackUType(instruction_data, cycle_data)
+        else:  
+            raise ValueError(f"Could not identify instruction type: {opcode}")

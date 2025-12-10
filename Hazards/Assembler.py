@@ -14,7 +14,19 @@ def encodeInstruction(instruction):
     '''
     this method encodes a single RISC-V instruction into binary 
     '''
+
+    # check if is a label
+    if (isinstance(instruction, dict)):
+        # print memory address pointed to by the label 
+        print(f"RISC-V instruction: {instruction["Label:"]}")
+
+        # SECTION 1.3: encode memory address value properly 
+        memory_address = instruction["Label:"] << 1 # shift 1 
+        
+        return instruction 
+
     print(f"RISC-V instruction: {instruction}")
+
     # clean and parse string 
     cleaned_instruction = instruction.replace(',', '') # remove comma
     cleaned_instruction = cleaned_instruction.replace('(', ' ') # remove parenthesis
@@ -55,8 +67,8 @@ def encodeInstruction(instruction):
     elif opcode_str in ['lui','auipc']:
         # U-type instruction
         encoded_instruction = encodeUType(segments, encoded_instruction)
-    else:
-        raise ValueError(f"Could not identify instruction type: {instruction}")
+    else:   # assume the instruction is a label
+        print("{instruction} is a label")
 
     # call writeEncoded() to write the instruction to a binary file
     return encoded_instruction
@@ -65,11 +77,17 @@ def writeEncoded(instruction, file_name):
     '''
     this method will write an encoded instruction to a binary file 
     '''
-    # check if instruction is the correct length 
-    if not len(instruction) == 32:
-        raise ValueError("Not correct length (%s)" % (instruction))
-    
-    instruction = int(instruction, 2)
+    # check if is a label 
+    if (isinstance(instruction, dict)):
+        address_value = instruction["Label:"]
+        instruction = address_value
+
+    else:   # just an ordinary instruction
+        # check if instruction is the correct length 
+        if not len(instruction) == 32:
+            raise ValueError("Not correct length (%s)" % (instruction))
+
+        instruction = int(instruction, 2)
 
     all_bytes = []
     mask = 2**8 - 1
@@ -89,5 +107,10 @@ def binaryToString(num):
     this method returns a string with all bits in binary and the beginning
     0b removed
     '''
+
+    # check if is a label 
+    if (isinstance(num, dict)):
+        return num # handle implementation later (?)
+
     unsigned = num & 0xFFFFFFFF
     return format(unsigned, '032b')

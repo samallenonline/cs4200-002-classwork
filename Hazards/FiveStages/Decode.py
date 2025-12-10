@@ -49,6 +49,15 @@ def decodeRType(encoded_instruction, instruction_data, cycle_data):
     decoded_instruction = rtype
     
     print(f"RISC-V instruction: {decoded_instruction}")
+
+    ##### store fields in instruction_data #####
+    instruction_data["Instr"] = str(instruction)
+    instruction_data["Fct3"] = str(funct3)
+    instruction_data["Rd"] = str(rd)
+    instruction_data["Rs1"] = str(rs1)
+    instruction_data["Rs2"] = str(rs2)
+    instruction_data["Fct7"] = str(funct7)
+
     return instruction_data, cycle_data
 
 def decodeI_LType(encoded_instruction, instruction_data, cycle_data):
@@ -223,6 +232,16 @@ def decodeSBType(encoded_instruction, instruction_data, cycle_data):
     decoded_instruction = sbtype
 
     print(f"RISC-V instruction: {decoded_instruction}")
+
+    ##### store fields in instruction_data #####
+    instruction_data["Instr"] = str(instruction)
+    instruction_data["Rs1"] = str(rs1)
+    instruction_data["Rs2"] = str(rs2)
+    instruction_data["Fct3"] = str(funct3)
+    instruction_data["Imm"] = str(immediate)
+
+    cycle_data["bne"] = str(1)  # is a bne branching instruction
+
     return instruction_data, cycle_data
 
 def decodeUType(encoded_instruction, opcode, instruction_data, cycle_data):
