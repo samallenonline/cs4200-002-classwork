@@ -21,6 +21,7 @@ class Funct3(Enum):
     OR = 6
     AND = 7
 
+### PUZZLES ###
 
 async def perform_not(dut) -> None:
     """
@@ -70,7 +71,7 @@ async def perform_negate(dut) -> None:
     
     # result stored in dut.d
 
-def perform_sub(dut) -> None:
+async def perform_sub(dut) -> None:
     """
     sub rd, rs1, rs2
 
@@ -79,7 +80,33 @@ def perform_sub(dut) -> None:
     :param s2: Second value as described in R sub
     :return: None
     """
-    raise NotImplementedError("Implement sub")
+    # setup inputs 
+    # step 1. negate r1
+
+    temporary = dut.s2.value
+
+    await perform_negate(dut)
+
+    # tick the clock 
+    print("clock (perform_sub_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+    print("perform_sub:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+    
+    # step 2. add r1 to r2
+    dut.s1.value = dut.d.value
+    dut.s2.value = temporary
+    # dut.s2.value = user_input
+    dut.funct3.value = Funct3.ADD.value # use add to add 1 
+
+    # tick the clock
+    print("clock (perform_sub_2) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    # result stored in dut.d
 
 
 async def set_gt(dut):
@@ -90,6 +117,12 @@ async def set_gt(dut):
     :return:
     """
 
+    # setup inputs 
+
+    # tick the clock 
+
+    # result stored in dut.d
+
 
 async def set_gte(dut):
     """
@@ -99,6 +132,13 @@ async def set_gte(dut):
     :return:
     """
 
+    # setup inputs 
+
+    # tick the clock 
+
+    # result stored in dut.d
+
+### COMPARISONS ###
 
 async def f_set_e(dut):
     """
@@ -126,6 +166,7 @@ async def f_set_lte(dut):
     :return:
     """
 
+### MULTIPLICATION ###
 
 async def perform_multiplication(dut):
     """
@@ -135,6 +176,7 @@ async def perform_multiplication(dut):
     :return:
     """
 
+### DIVISION ###
 
 async def perform_division(dut):
     """
@@ -214,6 +256,58 @@ async def test_perform_negate(dut):
     print("clock (test_perform_negate_3) = ", dut.clk.value)
     await FallingEdge(dut.clk)
 
+@cocotb.test()
+async def test_perform_sub(dut):
+    '''
+    Docstring for test_perform_sub
+    
+    :param dut: Description
+    '''
+    print("TESTING: perform_sub(dut)")
+    clock = Clock(dut.clk, period=10, units='ns')
+    cocotb.start_soon(clock.start(start_high=False))
+
+    # setup inputs
+    dut.s1.value = 0x0000FFFF
+    dut.s2.value = 0x00005555
+    await perform_sub(dut)      # setup operation
+
+    print("clock (test_perform_sub_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    # print values 
+    print("test_perform_sub:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    result = dut.d.value & 0xFFFFFFFF
+    expected = (0x0000FFFF - 0x00005555) & 0xFFFFFFFF
+
+    print("clock (test_perform_sub_2) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    assert result == expected, f"SUB failed: got 0x{result:08X}, expected 0x{expected:08X}"
+    print(f"SUB(0x007FAA78) = 0x{result:08X}")
+
+    print("clock (test_perform_negate_3) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+@cocotb.test()
+async def test_set_gt(dut):
+    '''
+    Docstring for test_set_gt
+    
+    :param dut: Description
+    '''
+
+@cocotb.test()
+async def test_set_gte(dut):
+    '''
+    Docstring for test_set_gte
+    
+    :param dut: Description
+    '''
 
 def test_via_cocotb():
     """

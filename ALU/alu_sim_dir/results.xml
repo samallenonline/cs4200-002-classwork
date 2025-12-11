@@ -1,8 +1,13 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1765424893" />
-    <testcase name="run_alu_sim" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="147" time="0.00011587142944335938" sim_time_ns="1.0" ratio_time="8630.255144032923" />
-    <testcase name="test_perform_not" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="153" time="0.0004620552062988281" sim_time_ns="21.0" ratio_time="45449.11455108359" />
-    <testcase name="test_perform_negate" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="185" time="0.00038123130798339844" sim_time_ns="31.0" ratio_time="81315.46216385241" />
+    <property name="random_seed" value="1765427606" />
+    <testcase name="run_alu_sim" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="189" time="0.00011277198791503906" sim_time_ns="1.0" ratio_time="8867.450317124736" />
+    <testcase name="test_perform_not" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="195" time="0.0004520416259765625" sim_time_ns="21.0" ratio_time="46455.898734177215" />
+    <testcase name="test_perform_negate" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="227" time="0.00032782554626464844" sim_time_ns="31.0" ratio_time="94562.49018181818" />
+    <testcase name="test_perform_sub" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="259" time="0.00045800209045410156" sim_time_ns="36.0" ratio_time="78602.261322228">
+      <failure message="Test failed with RANDOM_SEED=1765427606" />
+    </testcase>
+    <testcase name="test_set_gt" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="296" time="2.193450927734375e-05" sim_time_ns="1.0" ratio_time="45590.260869565216" />
+    <testcase name="test_set_gte" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="304" time="1.621246337890625e-05" sim_time_ns="1.0" ratio_time="61680.94117647059" />
   </testsuite>
 </testsuites>
