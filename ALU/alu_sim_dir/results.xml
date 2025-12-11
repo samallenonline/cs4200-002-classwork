@@ -1,0 +1,8 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1765424893" />
+    <testcase name="run_alu_sim" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="147" time="0.00011587142944335938" sim_time_ns="1.0" ratio_time="8630.255144032923" />
+    <testcase name="test_perform_not" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="153" time="0.0004620552062988281" sim_time_ns="21.0" ratio_time="45449.11455108359" />
+    <testcase name="test_perform_negate" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="185" time="0.00038123130798339844" sim_time_ns="31.0" ratio_time="81315.46216385241" />
+  </testsuite>
+</testsuites>
