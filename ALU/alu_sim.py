@@ -40,6 +40,11 @@ async def perform_not(dut) -> None:
     print("clock (perform_not_1) = ", dut.clk.value)
     await RisingEdge(dut.clk)
 
+    print("perform_not:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
     # result stored in dut.d
 
 
@@ -60,7 +65,6 @@ async def perform_negate(dut) -> None:
     await FallingEdge(dut.clk) 
 
     # step 2. add 1 to the result
-
     dut.s1.value = dut.d.value
     dut.s2.value = 0x1  # 0x00000001
     dut.funct3.value = Funct3.ADD.value # use add to add 1 
@@ -68,6 +72,11 @@ async def perform_negate(dut) -> None:
     # tick the clock
     print("clock (perform_negate_2) = ", dut.clk.value)
     await RisingEdge(dut.clk)
+
+    print("perform_negate:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
     
     # result stored in dut.d
 
@@ -81,9 +90,13 @@ async def perform_sub(dut) -> None:
     :return: None
     """
     # setup inputs 
-    # step 1. negate r1
+    # step 1. negate s2
 
-    temporary = dut.s2.value
+    # print("s1 check = ", dut.s1.value)
+    # print("s2 check = ", dut.s2.value)
+    temporary = dut.s1.value
+    dut.s1.value = dut.s2.value
+    dut.s2.value = 0
 
     await perform_negate(dut)
 
@@ -91,14 +104,9 @@ async def perform_sub(dut) -> None:
     print("clock (perform_sub_1) = ", dut.clk.value)
     await FallingEdge(dut.clk) 
 
-    print("perform_sub:")
-    print("s1 value = ", dut.s1.value)
-    print("s2 value = ", dut.s2.value)
-    print("d value = ", dut.d.value)
-    
     # step 2. add r1 to r2
-    dut.s1.value = dut.d.value
-    dut.s2.value = temporary
+    dut.s2.value = dut.d.value
+    dut.s1.value = temporary
     # dut.s2.value = user_input
     dut.funct3.value = Funct3.ADD.value # use add to add 1 
 
@@ -106,20 +114,40 @@ async def perform_sub(dut) -> None:
     print("clock (perform_sub_2) = ", dut.clk.value)
     await RisingEdge(dut.clk)
 
+    print("perform_sub:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("temp value = ", temporary)
+    print("d value = ", dut.d.value)
+
     # result stored in dut.d
 
 
 async def set_gt(dut):
     """
-    In the same format as slt, rd, rsq, rs2 perform the operation to set the output LSB bit to rs1 > rs2.
+    In the same format as slt, rd, rs1, rs2 perform the operation to set the output LSB bit to rs1 > rs2.
 
     :param dut:
     :return:
     """
 
+    # step 1. switch registers
     # setup inputs 
+    temp = dut.s1.value
+    dut.s1.value = dut.s2.value
+    dut.s2.value = temp
 
-    # tick the clock 
+    # step 2. determine if less than
+    dut.funct3.value = Funct3.SLT.value # SLT = 2
+
+    # tick the clock
+    print("clock (set_gt_5) = ", dut.clk.value)
+    await RisingEdge(dut.clk) 
+
+    print("set_gt:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
 
     # result stored in dut.d
 
@@ -132,11 +160,60 @@ async def set_gte(dut):
     :return:
     """
 
+    # step 1. check if s1 is greater than s2
     # setup inputs 
+    # s1 = user_input1
+    # s2 = user_input2
+    input1 = dut.s1.value
+    input2 = dut.s2.value
+
+    await set_gt(dut)
 
     # tick the clock 
+    print("clock (set_gte_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk) 
 
     # result stored in dut.d
+    result1 = dut.d.value
+    print("greater than result = ", result1)
+
+    # step 2. check if s1 is equal to s2
+    # refresh inputs
+    dut.s1.value = input1
+    dut.s2.value = input2
+
+    # step 2.1 subtract s1 and s2
+    await perform_sub(dut)
+
+    # tick the clock 
+    print("clock (set_gte_2) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+    print("set_gt_1:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    # step 2.2 check if d = 0
+    result2 = dut.zero.value & 0xFFFFFFFF
+    print("is 0 result = ", result2)
+
+    # step 3. OR both results
+    dut.s1.value = result1
+    dut.s2.value = result2
+    dut.funct3.value = Funct3.OR.value # SLT = 6
+
+    # tick the clock 
+    print("clock (set_gte_3) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("set_gt_2:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    # result stored in dut.d
+
 
 ### COMPARISONS ###
 
@@ -148,6 +225,44 @@ async def f_set_e(dut):
     :return:
     """
 
+    # print values 
+    print("f_set_e:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    # set inputs 
+    # r1 = user_input1
+    # r2 = user_input2
+    dut.funct3.value = Funct3.XOR.value # 0 0 = 0, 1 1 = 0
+    dut.funct7.value = 0
+
+    # tick the clock
+    print("clock (f_set_e_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("clock (f_set_e_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    # result stored in dut.d
+    # get dut.zero value stored in d (using add, wouldn't work otherwise idk why)
+    is_equal = dut.zero.value & 0xFFFFFFFF
+    dut.s1.value = is_equal
+    dut.s2.value = 0x00000000
+    dut.funct3.value = Funct3.ADD.value
+
+    print("dut.zero = ", dut.zero.value)
+
+    # tick the clock
+    print("clock (f_set_e_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    # print values 
+    print("f_set_e:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
 
 async def f_set_lt(dut):
     """
@@ -157,6 +272,182 @@ async def f_set_lt(dut):
     :return:
     """
 
+    # set inputs 
+    # s1 = user_input1
+    # s2 = user_input2
+
+    # print values 
+    print("f_set_lt:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    # COMPARE EXPONENTS (LESS THAN?)
+    print("COMPARE EXPONENTS (LESS THAN?)")
+    # save value of inputs for later
+    s1 = dut.s1.value
+    s2 = dut.s2.value
+
+    # extract exponents
+    mask = 0x7F800000
+    s1_exp = mask & s1
+    s2_exp = mask & s2
+
+    # setup inputs to SLT
+    dut.s1.value = s1_exp
+    dut.s2.value = s2_exp
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk) 
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+    # print values 
+    print("f_set_lt:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    dut.funct3.value = Funct3.SLT.value # a < b = 1 (a less than b), else 0
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk) 
+
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+    # result saved in dut.d
+    result1 = dut.d.value & 0xFFFFFFFF
+    print("result1 = ", result1)
+
+    # COMPARE EXPONENTS (EQUAL TO?)
+    print("COMPARE EXPONENTS (EQUAL TO?)")
+    # step 1. perform subtraction for comparison
+    # inputs should be the same
+    dut.s1.value = s1_exp
+    dut.s2.value = s2_exp
+    await perform_sub(dut)
+
+    # tick the clock
+    print("clock (f_set_lt_2) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+    print("dut.d = ", dut.d.value)
+    # result saved to dut.d
+
+    sub_result = dut.d.value
+    dut.s1.value = sub_result
+    dut.s2.value = 0x00000000
+    dut.funct3.value = Funct3.ADD.value
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk) 
+
+    # result saved to dut.d
+
+    result2 = dut.zero.value & 0xFFFFFFFF
+    print("result2 = ", result2)
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+    # COMPARE MANTISSA (LESS THAN?)
+    print("COMPARE MANTISSA (LESS THAN?)")
+    # extract mantissas
+    mask = 0x007FFFFF
+    s1_man = mask & s1
+    s2_man = mask & s2
+
+    # compare mantissa SLT
+    dut.s1.value = s1_man
+    dut.s2.value = s2_man
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk) 
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+   # print values 
+    print("f_set_lt:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    dut.funct3.value = Funct3.SLT.value # a < b = 1 (a less than b), else 0
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk) 
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+    # result stored in dut.d
+    result3 = dut.d.value & 0xFFFFFFFF
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk) 
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+    print("f_set_lt:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    # print results of all comparisons
+    print("result1 = ", result1)
+    print("result2 = ", result2)
+    print("result3 = ", result3)
+
+    # ALL TESTS COMPLETED 
+    # result 2 AND result 3
+    dut.s1.value = result2
+    dut.s2.value = result3
+    dut.funct3.value = Funct3.AND.value
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk) 
+
+    result_and = dut.d.value
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+    print("result_and", result_and)
+
+    # result 1 OR (result 2 AND result 3)
+    dut.s1.value = result1
+    dut.s2.value = result_and
+    dut.funct3.value = Funct3.OR.value
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk) 
+
+    final_result = dut.d.value
+
+    # tick the clock
+    print("clock (f_set_lt_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk) 
+
+    print("final result = ", final_result)
+    
 
 async def f_set_lte(dut):
     """
@@ -165,6 +456,63 @@ async def f_set_lte(dut):
     :param dut:
     :return:
     """
+
+    # check if s1 is less than s2
+    # set inputs 
+    s1 = dut.s1.value
+    s2 = dut.s2.value
+    await f_set_lt(dut) # less than
+
+    # tick the clock
+    print("clock (f_set_lte_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    # result stored in dut.d
+    result_lt = dut.d.value
+    print("result_lt = ", result_lt)
+
+    # tick the clock
+    print("clock (f_set_lte_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    # check if s1 is equal to s2 
+    dut.s1.value = s1
+    dut.s2.value = s2
+    await f_set_e(dut)  # equal to
+
+    # tick the clock
+    print("clock (f_set_lte_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    # result stored in dut.d
+    result_eq = dut.d.value
+    print("result_eq = ", result_eq)
+
+    # tick the clock
+    print("clock (f_set_lte_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    # AND both results
+    dut.s1.value = result_lt
+    dut.s2.value = result_eq
+    dut.funct3.value = Funct3.ADD.value
+
+    # tick the clock
+    print("clock (f_set_lte_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    # result stored in dut.d
+    print("final_result = ", dut.d.value)
+
+    print("f_set_lte:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+   # tick the clock
+    print("clock (f_set_lte_1) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
 
 ### MULTIPLICATION ###
 
@@ -208,6 +556,7 @@ async def test_perform_not(dut):
     await FallingEdge(dut.clk)
 
     # print values 
+    print("test_perform_not:")
     print("s1 value = ", dut.s1.value)
     print("s2 value = ", dut.s2.value)
     print("d value = ", dut.d.value)
@@ -240,6 +589,7 @@ async def test_perform_negate(dut):
     await FallingEdge(dut.clk)
 
     # print values 
+    print("test_perform_negate:")
     print("s1 value = ", dut.s1.value)
     print("s2 value = ", dut.s2.value)
     print("d value = ", dut.d.value)
@@ -257,7 +607,7 @@ async def test_perform_negate(dut):
     await FallingEdge(dut.clk)
 
 @cocotb.test()
-async def test_perform_sub(dut):
+async def test1_perform_sub(dut):
     '''
     Docstring for test_perform_sub
     
@@ -270,6 +620,11 @@ async def test_perform_sub(dut):
     # setup inputs
     dut.s1.value = 0x0000FFFF
     dut.s2.value = 0x00005555
+
+    await RisingEdge(dut.clk)
+    print("rs2 check = ", dut.s2.value)
+
+    await FallingEdge(dut.clk)
     await perform_sub(dut)      # setup operation
 
     print("clock (test_perform_sub_1) = ", dut.clk.value)
@@ -294,20 +649,263 @@ async def test_perform_sub(dut):
     await FallingEdge(dut.clk)
 
 @cocotb.test()
-async def test_set_gt(dut):
+async def test2_perform_sub(dut):
     '''
-    Docstring for test_set_gt
+    Docstring for test_perform_sub
     
     :param dut: Description
     '''
+    print("TESTING: perform_sub(dut)")
+    clock = Clock(dut.clk, period=10, units='ns')
+    cocotb.start_soon(clock.start(start_high=False))
+
+    # setup inputs
+    dut.s1.value = 0x0000F000
+    dut.s2.value = 0x00000001
+
+    print("clock (test2_perform_sub_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("clock (test2_perform_sub_2) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+    await perform_sub(dut)      # setup operation
+
+    print("clock (test2_perform_sub_3) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    # print values 
+    print("test2_perform_sub:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    result = dut.d.value & 0xFFFFFFFF
+    expected = (0x0000F000 - 0x00000001) & 0xFFFFFFFF
+
+    print("clock (test2_perform_sub_4) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    assert result == expected, f"SUB failed: got 0x{result:08X}, expected 0x{expected:08X}"
+    print(f"SUB(0x007FAA78) = 0x{result:08X}")
+
+    print("clock (test2_perform_sub_5) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+@cocotb.test()
+async def test_set_gt(dut):
+    '''
+    Docstring for test_set_gt **SIGNED
+    
+    :param dut: Description
+    '''
+    print("TESTING: set_gt(dut)")
+    clock = Clock(dut.clk, period=10, units='ns')
+    cocotb.start_soon(clock.start(start_high=False))
+
+    # setup inputs
+    dut.s1.value = 0x1234AAAA
+    dut.s2.value = 0x12340000
+
+    print("clock (test_set_gt_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("clock (test_set_gt_2) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    await set_gt(dut)      # setup operation
+
+    print("clock (test_set_gt_3) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    # print values 
+    print("test_set_gt:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    result = dut.d.value & 0xFFFFFFFF
+    expected = (0x1234AAAA > 0x12340000) & 0xFFFFFFFF
+
+    print("clock (test_set_gt_4) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    assert result == expected, f"GT failed: got 0x{result:08X}, expected 0x{expected:08X}"
+    print(f"GT({expected}) = {result:08X}")
+
+    print("clock (test_set_gt_5) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
 
 @cocotb.test()
 async def test_set_gte(dut):
     '''
-    Docstring for test_set_gte
+    Docstring for test_set_gte **SIGNED
     
     :param dut: Description
     '''
+    print("TESTING: set_gte(dut)")
+    clock = Clock(dut.clk, period=10, units='ns')
+    cocotb.start_soon(clock.start(start_high=False))
+
+    # setup inputs
+    dut.s1.value = 0x12340000
+    dut.s2.value = 0x1234AAAA
+
+    print("clock (test_set_gte_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("clock (test_set_gte_2) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    await set_gte(dut)      # setup operation
+
+    print("clock (test_set_gte_3) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    # print values 
+    print("test_set_gte:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    result = dut.d.value & 0xFFFFFFFF
+    expected = (0x12340000 >= 0x1234AAAA) & 0xFFFFFFFF
+
+    print("clock (test_set_gte_4) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    assert result == expected, f"GTE failed: got 0x{result:08X}, expected 0x{expected:08X}"
+    print(f"GTE({expected}) = {result:08X}")
+
+    print("clock (test_set_gte_5) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+@cocotb.test()
+async def test_f_set_e(dut):
+    '''
+    Docstring for test_f_set_e
+    
+    :param dut: Description
+    '''
+    print("TESTING: f_set_e(dut)")
+    clock = Clock(dut.clk, period=10, units='ns')
+    cocotb.start_soon(clock.start(start_high=False))
+
+    # setup inputs
+    dut.s1.value = 0x4048F5C3   # = 3.14
+    dut.s2.value = 0x4048F5C3   # = 3.14
+
+    print("clock (test_f_set_e1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("clock (test_f_set_e2) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    await f_set_e(dut)      # setup operation
+
+    print("clock (test_f_set_e3) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    # print values 
+    print("test_f_set_e:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    result = dut.d.value & 0xFFFFFFFF
+    expected = (0x4048F5C3 == 0x4048F5C3) & 0xFFFFFFFF
+
+    print("clock (test_f_set_e4) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    assert result == expected, f"EQUAL failed: got 0x{result:08X}, expected 0x{expected:08X}"
+    print(f"EQUAL({expected}) = {result:08X}")
+
+    print("clock (test_f_set_e5) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+@cocotb.test()
+async def test_f_set_lt(dut):
+    '''
+    Docstring for test_f_set_lt
+    
+    :param dut: Description
+    '''
+    print("TESTING: f_set_lt(dut)")
+    clock = Clock(dut.clk, period=10, units='ns')
+    cocotb.start_soon(clock.start(start_high=False))
+
+    # setup inputs
+    dut.s1.value = 0x3fa66666   # = 1.3
+    # dut.s2.value = 0x3f933333   # = 1.15
+    # dut.s2.value = 0x40133333   # = 2.3
+    dut.s2.value = 0x40200000   # = 2.5
+
+    print("clock (test_f_set_lt_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("clock (test_f_set_lt_2) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    await f_set_lt(dut)      # setup operation
+
+    print("clock (test_f_set_lt_3) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    result = dut.d.value & 0xFFFFFFFF
+    expected = (0x3fa66666 < 0x40200000) & 0xFFFFFFFF
+
+    print("clock (test_f_set_lt_4) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    assert result == expected, f"LESS THAN failed: got 0x{result:08X}, expected 0x{expected:08X}"
+    print(f"LESS THAN({expected}) = {result:08X}")
+
+    print("clock (test_f_set_lt_5) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+@cocotb.test()
+async def test_f_set_lte(dut):
+    '''
+    Docstring for test_f_set_lte
+    
+    :param dut: Description
+    '''
+    print("TESTING: f_set_lte(dut)")
+    clock = Clock(dut.clk, period=10, units='ns')
+    cocotb.start_soon(clock.start(start_high=False))
+
+    # setup inputs
+    # dut.s1.value = 0x3fa66666   # = 1.3
+    # dut.s1.value = 0x40200000   # = 2.5
+    dut.s1.value = 0x40133333   # = 2.3
+    # dut.s1.value = 0x3f933333   # = 1.15
+    # dut.s2.value = 0x3fa66666   # = 1.3
+    # dut.s2.value = 0x3f933333   # = 1.15
+    # dut.s2.value = 0x40133333   # = 2.3
+    dut.s2.value = 0x40200000   # = 2.5
+
+    print("clock (test_f_set_lte_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("clock (test_f_set_lte_2) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    await f_set_lte(dut)      # setup operation
+
+    print("clock (test_f_set_lte_3) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    result = dut.d.value & 0xFFFFFFFF
+    expected = (0x40133333 <= 0x40200000) & 0xFFFFFFFF
+
+    print("clock (test_f_set_lte_4) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    assert result == expected, f"LTE failed: got 0x{result:08X}, expected 0x{expected:08X}"
+    print(f"LTE ({expected}) = {result:08X}")
+
+    print("clock (test_f_set_lte_5) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
 
 def test_via_cocotb():
     """

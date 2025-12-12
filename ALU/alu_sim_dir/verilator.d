@@ -1,5 +1,5 @@
 verilator.o: \
-  /Users/rae/workspace-python/.venv/lib/python3.13/site-packages/cocotb/share/lib/verilator/verilator.cpp \
+  /opt/homebrew/Caskroom/miniconda/base/envs/cs4200-sim/lib/python3.9/site-packages/cocotb/share/lib/verilator/verilator.cpp \
   Vtop.h \
   /opt/homebrew/Caskroom/miniconda/base/envs/cs4200-sim/share/verilator/include/verilated.h \
   /opt/homebrew/Caskroom/miniconda/base/envs/cs4200-sim/share/verilator/include/verilatedos.h \
