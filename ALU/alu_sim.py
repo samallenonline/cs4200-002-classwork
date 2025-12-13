@@ -5,8 +5,7 @@ import cocotb
 
 from cocotb.clock import Clock
 from cocotb.runner import get_runner
-#from cocotb.triggers import RisingEdge
-from cocotb.triggers import *
+from cocotb.triggers import RisingEdge
 
 alu_sim_dir = os.path.abspath(os.path.join('.', 'alu_sim_dir'))
 
@@ -62,7 +61,7 @@ async def perform_negate(dut) -> None:
     await perform_not(dut) 
 
     print("clock (perform_negate_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     # step 2. add 1 to the result
     dut.s1.value = dut.d.value
@@ -102,7 +101,7 @@ async def perform_sub(dut) -> None:
 
     # tick the clock 
     print("clock (perform_sub_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     # step 2. add r1 to r2
     dut.s2.value = dut.d.value
@@ -187,7 +186,7 @@ async def set_gte(dut):
 
     # tick the clock 
     print("clock (set_gte_2) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     print("set_gt_1:")
     print("s1 value = ", dut.s1.value)
@@ -242,7 +241,7 @@ async def f_set_e(dut):
     await RisingEdge(dut.clk)
 
     print("clock (f_set_e_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # result stored in dut.d
     # get dut.zero value stored in d (using add, wouldn't work otherwise idk why)
@@ -303,7 +302,7 @@ async def f_set_lt(dut):
 
     # tick the clock
     print("clock (f_set_lt_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     # print values 
     print("f_set_lt:")
@@ -318,7 +317,7 @@ async def f_set_lt(dut):
     await RisingEdge(dut.clk) 
 
     print("clock (f_set_lt_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     # result saved in dut.d
     result1 = dut.d.value & 0xFFFFFFFF
@@ -334,7 +333,7 @@ async def f_set_lt(dut):
 
     # tick the clock
     print("clock (f_set_lt_2) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     print("dut.d = ", dut.d.value)
     # result saved to dut.d
@@ -355,7 +354,7 @@ async def f_set_lt(dut):
 
     # tick the clock
     print("clock (f_set_lt_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     # COMPARE MANTISSA (LESS THAN?)
     print("COMPARE MANTISSA (LESS THAN?)")
@@ -374,7 +373,7 @@ async def f_set_lt(dut):
 
     # tick the clock
     print("clock (f_set_lt_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
    # print values 
     print("f_set_lt:")
@@ -390,7 +389,7 @@ async def f_set_lt(dut):
 
     # tick the clock
     print("clock (f_set_lt_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     # result stored in dut.d
     result3 = dut.d.value & 0xFFFFFFFF
@@ -401,7 +400,7 @@ async def f_set_lt(dut):
 
     # tick the clock
     print("clock (f_set_lt_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     print("f_set_lt:")
     print("s1 value = ", dut.s1.value)
@@ -427,7 +426,7 @@ async def f_set_lt(dut):
 
     # tick the clock
     print("clock (f_set_lt_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     print("result_and", result_and)
 
@@ -444,7 +443,7 @@ async def f_set_lt(dut):
 
     # tick the clock
     print("clock (f_set_lt_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk) 
+    await RisingEdge(dut.clk) 
 
     print("final result = ", final_result)
     
@@ -473,7 +472,7 @@ async def f_set_lte(dut):
 
     # tick the clock
     print("clock (f_set_lte_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # check if s1 is equal to s2 
     dut.s1.value = s1
@@ -490,7 +489,7 @@ async def f_set_lte(dut):
 
     # tick the clock
     print("clock (f_set_lte_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # AND both results
     dut.s1.value = result_lt
@@ -511,7 +510,7 @@ async def f_set_lte(dut):
 
    # tick the clock
     print("clock (f_set_lte_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 
 ### MULTIPLICATION ###
@@ -541,7 +540,7 @@ async def perform_multiplication(dut):
 
     # tick the clock 
     print("clock (perform_multiplication) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # LOOP START for i in range(32)
     for i in range(32):
@@ -556,7 +555,7 @@ async def perform_multiplication(dut):
 
         # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         print("perform_multiplication:")
         print("s1 value = ", dut.s1.value)
@@ -578,7 +577,7 @@ async def perform_multiplication(dut):
 
         # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
     # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
@@ -589,7 +588,7 @@ async def perform_multiplication(dut):
 
         # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         print("perform_multiplication:")
         print("s1 value = ", dut.s1.value)
@@ -606,7 +605,7 @@ async def perform_multiplication(dut):
 
     # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         # determine value to be added (if lsb = 0, add_value = 0. if lsb = 1, add_value = multiplicand)
         dut.s1.value = multiplicand 
@@ -619,7 +618,7 @@ async def perform_multiplication(dut):
 
     # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         # result stored in dut.d
         add_value = dut.d.value
@@ -631,7 +630,7 @@ async def perform_multiplication(dut):
 
         # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         # sum product and add_value (only adds multiplicand to product if lsb of multiplier = 1)
         dut.s1.value = add_value
@@ -644,7 +643,7 @@ async def perform_multiplication(dut):
 
         # tick the lock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         # result stored in dut.d
         product = dut.d.value
@@ -661,7 +660,7 @@ async def perform_multiplication(dut):
 
         # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         print("perform_multiplication (BEFORE LEFT SHIFT):")
         print("s1 value = ", dut.s1.value)
@@ -674,7 +673,7 @@ async def perform_multiplication(dut):
 
     # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         # result stored in dut.d
         multiplicand = dut.d.value
@@ -691,7 +690,7 @@ async def perform_multiplication(dut):
 
         # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         print("perform_multiplication - BEFORE RIGHT SHIFT:")
         print("s1 value = ", dut.s1.value)
@@ -712,7 +711,7 @@ async def perform_multiplication(dut):
 
     # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         # END OF LOOP
         # store result in rd
@@ -722,7 +721,7 @@ async def perform_multiplication(dut):
 
         # tick the clock 
         print("clock (perform_multiplication) = ", dut.clk.value)
-        await FallingEdge(dut.clk)
+        await RisingEdge(dut.clk)
 
         # result stored in rd
 
@@ -743,8 +742,360 @@ async def perform_division(dut):
     :param dut:
     :return:
     """
+    # setup inputs 
+    # dut.s1.value = user_input1
+    # dut.s2.value = user_input2
+    quotient = 0x0000   # 16-bit 
+    divisor = dut.s2.value  # 32-bit
+    remainder = dut.s1.value    # 32-bit
+
+    print("perform_division INITIAL:")
+    print("quotient = ", quotient)
+    print("remainder = ", remainder)
+    print("divisor = ", divisor)
+    print("fct3 = ", dut.funct3.value)
+
+    # shift divisor left 16 bits so it fills left half of divisor register 
+    dut.s1.value = divisor
+    dut.s2.value = 16
+    dut.funct3.value = Funct3.SLL.value
+
+    # tick the clock 
+    print("clock (perform_division) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    # tick the clock 
+    print("clock (perform_division) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+   # result stored in dut.d
+    divisor = dut.d.value
+    
+    print("perform_division:")
+    print("s1 = ", dut.s1.value)
+    print("s2 = ", dut.s2.value)
+
+    # tick the clock 
+    print("clock (perform_division) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("perform_division:")
+    print("quotient = ", quotient)
+    print("remainder = ", remainder)
+    print("divisor = ", divisor)
+
+    # tick the clock 
+    print("clock (perform_division) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    # LOOP START for i in range(65)
+    for i in range(17):
+        # subtract divisor from remainder and place result in remainder
+        dut.s1.value = remainder
+        dut.s2.value = divisor
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        await perform_sub(dut)
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("perform_division:")
+        print("quotient = ", quotient)
+        print("remainder = ", remainder)
+        print("divisor = ", divisor)
+
+        # result stored in dut.d
+        remainder = dut.d.value
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("**************************")
+        print("remainder = ", remainder)
+
+        # ^ ABOVE THIS IS GOOD ^
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("perform_division:")
+        print("quotient = ", quotient)
+        print("remainder = ", remainder)
+        print("divisor = ", divisor)
+
+        # test the remainder (remainder < 0, 1 if yes, 0 if no)
+        dut.s1.value = remainder 
+        dut.s2.value = 0x00000000
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        dut.funct3.value = Funct3.SLT.value
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # result stored in dut.d
+        remainder_test = dut.d.value & 0xFFFFFFFF
+        print("remainder_test = ", remainder_test)
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # create a mask 
+        dut.s1.value = 0x00000000
+        dut.s2.value = remainder_test
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        await perform_sub(dut)
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("**************************")
+        # ^ ABOVE THIS IS GOOD ^
+        # result stored in dut.d
+        mask = dut.d.value
+        print("mask = ", mask)
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+        
+        # determine value to be added 
+        dut.s1.value = divisor
+        dut.s2.value = mask
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("perform_division:")
+        print("s1 = ", dut.s1.value)
+        print("s2 = ", dut.s2.value)
+
+        dut.funct3.value = Funct3.AND.value
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # result stored in dut.d
+        add_value = dut.d.value
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("add_value = ", add_value)
+
+        print("perform_division:")
+        print("quotient = ", quotient)
+        print("remainder = ", remainder)
+        print("divisor = ", divisor)
+
+        # add the value 
+        dut.s1.value = add_value
+        dut.s2.value = remainder
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("perform_division:")
+        print("s1 = ", dut.s1.value)
+        print("s2 = ", dut.s2.value)
+        
+        dut.funct3.value = Funct3.ADD.value
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # result stored in dut.d
+        remainder = dut.d.value
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("perform_division:")
+        print("quotient = ", quotient)
+        print("remainder = ", remainder)
+        print("divisor = ", divisor)
+
+        print("**************************")
+        # ^ ABOVE THIS IS GOOD ^
+
+        # shift quotient register to the left 
+        dut.s1.value = quotient
+        dut.s2.value = 0x00000001
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        dut.funct3.value = Funct3.SLL.value
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # result stored in dut.d
+        quotient = dut.d.value
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("perform_division:")
+        print("quotient = ", quotient)
+        print("remainder = ", remainder)
+        print("divisor = ", divisor)
+
+        # set LSB accordingly (LSB = 1 if remainder >= 0, and LSB = 0 if remainder < 0)
+        # get opposite of remainder_test 
+        dut.s1.value = remainder_test
+        dut.s2.value = 0x00000001
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        dut.funct3.value = Funct3.XOR.value
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the clock
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # result stored in dut.d
+        lsb = dut.d.value & 0xFFFFFFFF
+
+        # tick the clock
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("lsb = ", lsb)
+
+        # add lsb to quotient 
+        dut.s1.value = quotient 
+        dut.s2.value = lsb
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        dut.funct3.value = Funct3.OR.value
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the clock
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # result stored in dut.d
+        quotient = dut.d.value
+
+        # tick the clock
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("perform_division:")
+        print("quotient = ", quotient)
+        print("remainder = ", remainder)
+        print("divisor = ", divisor)
+
+        # shift divisor register right 1 bit 
+        dut.s1.value = divisor 
+        dut.s2.value = 0x00000001
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        dut.funct3.value = Funct3.SRL.value
+
+        # tick the clock
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the clock 
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # result stored in dut.d
+        divisor = dut.d.value
+
+        # tick the clock
+        print("clock (perform_division) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("perform_division:")
+        print("quotient = ", quotient)
+        print("remainder = ", remainder)
+        print("divisor = ", divisor)
+
+    # END OF LOOP
+    
+    # return quotient 
+    dut.s1.value = quotient
+    dut.s2.value = 0x00000000
+
+    # tick the clock 
+    print("clock (perform_division) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    dut.funct3.value = Funct3.ADD.value
+
+    # tick the clock 
+    print("clock (perform_division) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    # tick the clock 
+    print("clock (perform_division) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    # result stored in dut.d
     
 
+
+    
 @cocotb.test()
 async def run_alu_sim(dut):
     clock = Clock(dut.clk, period=10, units='ns') # This assigns the clock into the ALU
@@ -764,7 +1115,7 @@ async def test_perform_not(dut):
     await perform_not(dut)      # setup operation
 
     print("clock (test_perform_not1) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # print values 
     print("test_perform_not:")
@@ -782,7 +1133,7 @@ async def test_perform_not(dut):
     print(f"NOT(0x12340000) = 0x{result:08X}")
 
     print("clock (test_perform_not_3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 @cocotb.test()
 async def test_perform_negate(dut):
@@ -797,7 +1148,7 @@ async def test_perform_negate(dut):
     await perform_negate(dut)      # setup operation
 
     print("clock (test_perform_negate_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # print values 
     print("test_perform_negate:")
@@ -815,7 +1166,7 @@ async def test_perform_negate(dut):
     print(f"NEGATE(0xFFFF000) = 0x{result:08X}")
 
     print("clock (test_perform_negate_3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 @cocotb.test()
 async def test1_perform_sub(dut):
@@ -835,11 +1186,11 @@ async def test1_perform_sub(dut):
     await RisingEdge(dut.clk)
     print("rs2 check = ", dut.s2.value)
 
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
     await perform_sub(dut)      # setup operation
 
     print("clock (test_perform_sub_1) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # print values 
     print("test_perform_sub:")
@@ -857,7 +1208,7 @@ async def test1_perform_sub(dut):
     print(f"SUB(0x007FAA78) = 0x{result:08X}")
 
     print("clock (test_perform_negate_3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 @cocotb.test()
 async def test2_perform_sub(dut):
@@ -878,11 +1229,11 @@ async def test2_perform_sub(dut):
     await RisingEdge(dut.clk)
 
     print("clock (test2_perform_sub_2) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
     await perform_sub(dut)      # setup operation
 
     print("clock (test2_perform_sub_3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # print values 
     print("test2_perform_sub:")
@@ -900,7 +1251,7 @@ async def test2_perform_sub(dut):
     print(f"SUB(0x007FAA78) = 0x{result:08X}")
 
     print("clock (test2_perform_sub_5) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 @cocotb.test()
 async def test_set_gt(dut):
@@ -921,12 +1272,12 @@ async def test_set_gt(dut):
     await RisingEdge(dut.clk)
 
     print("clock (test_set_gt_2) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     await set_gt(dut)      # setup operation
 
     print("clock (test_set_gt_3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # print values 
     print("test_set_gt:")
@@ -944,7 +1295,7 @@ async def test_set_gt(dut):
     print(f"GT({expected}) = {result:08X}")
 
     print("clock (test_set_gt_5) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 @cocotb.test()
 async def test_set_gte(dut):
@@ -965,12 +1316,12 @@ async def test_set_gte(dut):
     await RisingEdge(dut.clk)
 
     print("clock (test_set_gte_2) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     await set_gte(dut)      # setup operation
 
     print("clock (test_set_gte_3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # print values 
     print("test_set_gte:")
@@ -988,7 +1339,7 @@ async def test_set_gte(dut):
     print(f"GTE({expected}) = {result:08X}")
 
     print("clock (test_set_gte_5) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 @cocotb.test()
 async def test_f_set_e(dut):
@@ -1009,12 +1360,12 @@ async def test_f_set_e(dut):
     await RisingEdge(dut.clk)
 
     print("clock (test_f_set_e2) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     await f_set_e(dut)      # setup operation
 
     print("clock (test_f_set_e3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     # print values 
     print("test_f_set_e:")
@@ -1032,7 +1383,7 @@ async def test_f_set_e(dut):
     print(f"EQUAL({expected}) = {result:08X}")
 
     print("clock (test_f_set_e5) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 @cocotb.test()
 async def test_f_set_lt(dut):
@@ -1055,12 +1406,12 @@ async def test_f_set_lt(dut):
     await RisingEdge(dut.clk)
 
     print("clock (test_f_set_lt_2) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     await f_set_lt(dut)      # setup operation
 
     print("clock (test_f_set_lt_3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     result = dut.d.value & 0xFFFFFFFF
     expected = (0x3fa66666 < 0x40200000) & 0xFFFFFFFF
@@ -1072,7 +1423,7 @@ async def test_f_set_lt(dut):
     print(f"LESS THAN({expected}) = {result:08X}")
 
     print("clock (test_f_set_lt_5) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 @cocotb.test()
 async def test_f_set_lte(dut):
@@ -1099,12 +1450,12 @@ async def test_f_set_lte(dut):
     await RisingEdge(dut.clk)
 
     print("clock (test_f_set_lte_2) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     await f_set_lte(dut)      # setup operation
 
     print("clock (test_f_set_lte_3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     result = dut.d.value & 0xFFFFFFFF
     expected = (0x40133333 <= 0x40200000) & 0xFFFFFFFF
@@ -1116,7 +1467,7 @@ async def test_f_set_lte(dut):
     print(f"LTE ({expected}) = {result:08X}")
 
     print("clock (test_f_set_lte_5) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 @cocotb.test()
 async def test_perform_multiplication(dut):
@@ -1139,12 +1490,12 @@ async def test_perform_multiplication(dut):
     await RisingEdge(dut.clk)
 
     print("clock (test_perform_multiplication_2) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     await perform_multiplication(dut)      # setup operation
 
     print("clock (test_perform_multiplication_3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     result = dut.d.value & 0xFFFFFFFF
     expected = (0x00000019 * 0x00000002) & 0xFFFFFFFF
@@ -1156,7 +1507,7 @@ async def test_perform_multiplication(dut):
     print(f"MULT ({expected}) = {result:08X}")
 
     print("clock (test_perform_multiplication_5) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 @cocotb.test()
 async def test_perform_division(dut):
@@ -1172,22 +1523,24 @@ async def test_perform_division(dut):
     # setup inputs
     # dut.s1.value = 0x0000000A # = 10
     #dut.s2.value = 0x00000002 # = 2 = 00000000000000000000000000000010
-    dut.s1.value = 0x00000019 # = 25 = 00000000000000000000000000011001
-    dut.s2.value = 0x00000005 # = 5 = 00000000000000000000000000000101
+    # dut.s1.value = 0x00000019 # = 25 = 00000000000000000000000000011001
+    # dut.s2.value = 0x00000005 # = 5 = 00000000000000000000000000000101
+    dut.s1.value = 0x00000007 # = 7
+    dut.s2.value = 0x00000002 # = 2
 
     print("clock (test_perform_division_1) = ", dut.clk.value)
     await RisingEdge(dut.clk)
 
     print("clock (test_perform_division_2) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     await perform_division(dut)      # setup operation
 
     print("clock (test_perform_division_3) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
     result = dut.d.value & 0xFFFFFFFF
-    expected = (0x00000019 * 0x00000005) & 0xFFFFFFFF
+    expected = (0x00000007 // 0x00000002) & 0xFFFFFFFF
 
     print("clock (test_perform_division_4) = ", dut.clk.value)
     await RisingEdge(dut.clk)
@@ -1196,7 +1549,7 @@ async def test_perform_division(dut):
     print(f"DIV ({expected}) = {result:08X}")
 
     print("clock (test_perform_division_5) = ", dut.clk.value)
-    await FallingEdge(dut.clk)
+    await RisingEdge(dut.clk)
 
 def test_via_cocotb():
     """
