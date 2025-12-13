@@ -1,15 +1,17 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1765524114" />
-    <testcase name="run_alu_sim" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="537" time="0.0001049041748046875" sim_time_ns="1.0" ratio_time="9532.50909090909" />
-    <testcase name="test_perform_not" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="543" time="0.00046706199645996094" sim_time_ns="21.0" ratio_time="44961.91117917305" />
-    <testcase name="test_perform_negate" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="576" time="0.0004467964172363281" sim_time_ns="31.0" ratio_time="69382.8303094984" />
-    <testcase name="test1_perform_sub" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="609" time="0.0007376670837402344" sim_time_ns="51.0" ratio_time="69136.87912087912" />
-    <testcase name="test2_perform_sub" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="651" time="0.0008969306945800781" sim_time_ns="51.0" ratio_time="56860.58054226475" />
-    <testcase name="test_set_gt" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="694" time="0.0003859996795654297" sim_time_ns="31.0" ratio_time="80310.94749845583" />
-    <testcase name="test_set_gte" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="738" time="0.0009729862213134766" sim_time_ns="81.0" ratio_time="83248.86645430041" />
-    <testcase name="test_f_set_e" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="782" time="0.0004942417144775391" sim_time_ns="41.0" ratio_time="82955.36131210806" />
-    <testcase name="test_f_set_lt" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="826" time="0.0015349388122558594" sim_time_ns="141.0" ratio_time="91860.33923578751" />
-    <testcase name="test_f_set_lte" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="866" time="0.0021250247955322266" sim_time_ns="191.0" ratio_time="89881.30416245933" />
+    <property name="random_seed" value="1765595804" />
+    <testcase name="run_alu_sim" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="747" time="0.00011682510375976562" sim_time_ns="1.0" ratio_time="8559.804081632654" />
+    <testcase name="test_perform_not" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="753" time="0.0008118152618408203" sim_time_ns="21.0" ratio_time="25867.954185022027" />
+    <testcase name="test_perform_negate" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="786" time="0.0006651878356933594" sim_time_ns="31.0" ratio_time="46603.37777777778" />
+    <testcase name="test1_perform_sub" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="819" time="0.0006377696990966797" sim_time_ns="51.0" ratio_time="79966.16971962617" />
+    <testcase name="test2_perform_sub" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="861" time="0.0006129741668701172" sim_time_ns="51.0" ratio_time="83200.89614935823" />
+    <testcase name="test_set_gt" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="904" time="0.0003762245178222656" sim_time_ns="31.0" ratio_time="82397.60709759188" />
+    <testcase name="test_set_gte" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="948" time="0.0011911392211914062" sim_time_ns="81.0" ratio_time="68002.12650120095" />
+    <testcase name="test_f_set_e" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="992" time="0.0005419254302978516" sim_time_ns="41.0" ratio_time="75656.16542014958" />
+    <testcase name="test_f_set_lt" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="1036" time="0.0024640560150146484" sim_time_ns="141.0" ratio_time="57222.72510885341" />
+    <testcase name="test_f_set_lte" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="1076" time="0.002377033233642578" sim_time_ns="191.0" ratio_time="80352.26318956871" />
+    <testcase name="test_perform_multiplication" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="1120" time="0.0625770092010498" sim_time_ns="5161.0" ratio_time="82474.37942293698" />
+    <testcase name="test_perform_division" classname="alu_sim" file="/Users/rae/workspace-python/ALU/alu_sim.py" lineno="1160" time="2.7179718017578125e-05" sim_time_ns="1.0" ratio_time="36792.14035087719" />
   </testsuite>
 </testsuites>

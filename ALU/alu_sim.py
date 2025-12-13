@@ -523,6 +523,216 @@ async def perform_multiplication(dut):
     :param dut:
     :return:
     """
+    # setup inputs 
+    # dut.s1.value = user_input1
+    # dut.s2.value = user_input2
+    multiplicand = dut.s1.value
+    multiplier = dut.s2.value
+    product = 0x00000000    # register to hold product
+
+    # tick the clock 
+    print("clock (perform_multiplication) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("perform_multiplication:")
+    print("s1 value = ", dut.s1.value)
+    print("s2 value = ", dut.s2.value)
+    print("d value = ", dut.d.value)
+
+    # tick the clock 
+    print("clock (perform_multiplication) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    # LOOP START for i in range(32)
+    for i in range(32):
+        # obtain lsb of multiplier
+        dut.s1.value = multiplier
+        dut.s2.value = 0x00000001
+        dut.funct3.value = Funct3.AND.value
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        print("perform_multiplication:")
+        print("s1 value = ", dut.s1.value)
+        print("s2 value = ", dut.s2.value)
+        print("d value = ", dut.d.value)
+
+        # result stored in dut.d
+        lsb = dut.d.value
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        print("multiplier lsb =", lsb)
+
+        # create mask 
+        dut.s1.value = 0x00000000
+        dut.s2.value = lsb
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+    # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # subtract values (if lsb = 0, 0 - lsb = 0x00000000. if lsb = 1, 0 - lsb = 0xFFFFFFFF)
+        await perform_sub(dut)
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        print("perform_multiplication:")
+        print("s1 value = ", dut.s1.value)
+        print("s2 value = ", dut.s2.value)
+        print("d value = ", dut.d.value)
+
+        # result will be in dut.d 
+        mask = dut.d.value
+        print("mask = ", mask)
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+    # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        # determine value to be added (if lsb = 0, add_value = 0. if lsb = 1, add_value = multiplicand)
+        dut.s1.value = multiplicand 
+        dut.s2.value = mask
+        dut.funct3.value = Funct3.AND.value
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+    # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        # result stored in dut.d
+        add_value = dut.d.value
+        print("value added to product = ", add_value)
+
+    # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        # sum product and add_value (only adds multiplicand to product if lsb of multiplier = 1)
+        dut.s1.value = add_value
+        dut.s2.value = product 
+        dut.funct3.value = Funct3.ADD.value
+
+    # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the lock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        # result stored in dut.d
+        product = dut.d.value
+        print("product = ", product)
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # shift the multiplicand register left 1 bit 
+        print("multiplicand before left shift = ", multiplicand)
+        dut.s1.value = multiplicand
+        dut.s2.value = 0x00000001
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        print("perform_multiplication (BEFORE LEFT SHIFT):")
+        print("s1 value = ", dut.s1.value)
+        print("s2 value = ", dut.s2.value)
+        dut.funct3.value = Funct3.SLL.value
+
+    # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+    # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        # result stored in dut.d
+        multiplicand = dut.d.value
+        print("multiplicand after left shift = ", multiplicand)
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # shift the multiplier register right 1 bit 
+        print("multiplier before right shift = ", multiplier)
+        dut.s1.value = multiplier 
+        dut.s2.value = 0x00000001
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        print("perform_multiplication - BEFORE RIGHT SHIFT:")
+        print("s1 value = ", dut.s1.value)
+        print("s2 value = ", dut.s2.value)
+        dut.funct3.value = Funct3.SRL.value
+
+    # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await RisingEdge(dut.clk)
+
+        # result stored in dut.d
+        multiplier = dut.d.value
+        print("multiplier after right shift = ", multiplier)
+
+    # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        # END OF LOOP
+        # store result in rd
+        dut.s1.value = product 
+        dut.s2.value = 0x00000000
+        dut.funct3.value = Funct3.ADD.value
+
+        # tick the clock 
+        print("clock (perform_multiplication) = ", dut.clk.value)
+        await FallingEdge(dut.clk)
+
+        # result stored in rd
+
+        print("perform_multiplication:")
+        print("s1 value = ", dut.s1.value)
+        print("s2 value = ", dut.s2.value)
+        print("d value = ", dut.d.value)
+        print("multiplicand = ", multiplicand)
+        print("multiplier = ", multiplier )
+
 
 ### DIVISION ###
 
@@ -533,6 +743,7 @@ async def perform_division(dut):
     :param dut:
     :return:
     """
+    
 
 @cocotb.test()
 async def run_alu_sim(dut):
@@ -905,6 +1116,86 @@ async def test_f_set_lte(dut):
     print(f"LTE ({expected}) = {result:08X}")
 
     print("clock (test_f_set_lte_5) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+@cocotb.test()
+async def test_perform_multiplication(dut):
+    '''
+    Docstring for test_perform_multiplication
+    
+    :param dut: Description
+    '''
+    print("TESTING: perform_multiplication(dut)")
+    clock = Clock(dut.clk, period=10, units='ns')
+    cocotb.start_soon(clock.start(start_high=False))
+
+    # setup inputs
+    # dut.s1.value = 0x0000000A # = 10
+    # dut.s2.value = 0x00000005 # = 5
+    dut.s1.value = 0x00000019 # = 25 = 00000000000000000000000000011001
+    dut.s2.value = 0x00000002 # = 2 = 00000000000000000000000000000010
+
+    print("clock (test_perform_multiplication_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("clock (test_perform_multiplication_2) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    await perform_multiplication(dut)      # setup operation
+
+    print("clock (test_perform_multiplication_3) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    result = dut.d.value & 0xFFFFFFFF
+    expected = (0x00000019 * 0x00000002) & 0xFFFFFFFF
+
+    print("clock (test_perform_multiplication_4) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    assert result == expected, f"MULT failed: got 0x{result:08X}, expected 0x{expected:08X}"
+    print(f"MULT ({expected}) = {result:08X}")
+
+    print("clock (test_perform_multiplication_5) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+@cocotb.test()
+async def test_perform_division(dut):
+    '''
+    Docstring for test_perform_division
+    
+    :param dut: Description
+    '''
+    print("TESTING: perform_division(dut)")
+    clock = Clock(dut.clk, period=10, units='ns')
+    cocotb.start_soon(clock.start(start_high=False))
+
+    # setup inputs
+    # dut.s1.value = 0x0000000A # = 10
+    #dut.s2.value = 0x00000002 # = 2 = 00000000000000000000000000000010
+    dut.s1.value = 0x00000019 # = 25 = 00000000000000000000000000011001
+    dut.s2.value = 0x00000005 # = 5 = 00000000000000000000000000000101
+
+    print("clock (test_perform_division_1) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    print("clock (test_perform_division_2) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    await perform_division(dut)      # setup operation
+
+    print("clock (test_perform_division_3) = ", dut.clk.value)
+    await FallingEdge(dut.clk)
+
+    result = dut.d.value & 0xFFFFFFFF
+    expected = (0x00000019 * 0x00000005) & 0xFFFFFFFF
+
+    print("clock (test_perform_division_4) = ", dut.clk.value)
+    await RisingEdge(dut.clk)
+
+    assert result == expected, f"DIV failed: got 0x{result:08X}, expected 0x{expected:08X}"
+    print(f"DIV ({expected}) = {result:08X}")
+
+    print("clock (test_perform_division_5) = ", dut.clk.value)
     await FallingEdge(dut.clk)
 
 def test_via_cocotb():
